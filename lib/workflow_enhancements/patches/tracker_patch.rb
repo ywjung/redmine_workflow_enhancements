@@ -1,10 +1,7 @@
 require_dependency 'tracker'
 
-class Tracker
-  has_many :tracker_statuses
-  has_many :predef_issue_statuses, :through => :tracker_statuses
-
-  def issue_statuses_with_workflow_enhancements
+module RenderIssueEnhancements
+  def render(*args, &block)
     if @issue_statuses
       return @issue_statuses
     elsif new_record?
@@ -23,7 +20,15 @@ class Tracker
     ids = ids.flatten.uniq
     @issue_statuses = IssueStatus.where(:id => ids).all.sort
   end
-
-  alias_method_chain :issue_statuses, :workflow_enhancements
 end
 
+class Tracker
+  has_many :tracker_statuses
+  has_many :predef_issue_statuses, :through => :tracker_statuses
+  
+  # delegates partial views to module
+  Tracker.send(:prepend, RenderIssueEnhancements)  #alias_method_chain :issue_statuses, :workflow_enhancements
+  
+  #def render_with_workflow_enhancements(*args, &block)... moved to RenderIssueEnhancements now called render()
+  
+end

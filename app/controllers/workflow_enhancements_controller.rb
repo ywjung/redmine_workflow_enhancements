@@ -1,5 +1,6 @@
 class WorkflowEnhancementsController < ApplicationController
-  before_filter :find_project_by_project_id #, :authorize
+  # previously before_filter :find_project_by_project_id #, :authorize
+  before_action :find_project_by_project_id #, :authorize  
 
   def show
     @roles = User.current.roles_for_project(@project)
@@ -10,4 +11,6 @@ class WorkflowEnhancementsController < ApplicationController
     end
     render :layout => false
   end
+
+  
 end
